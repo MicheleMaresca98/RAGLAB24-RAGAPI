@@ -121,10 +121,10 @@ export class EditorComponent implements OnInit {
   }
 
   confidenceLabel(confidence: number) {
-    if (confidence < 0.5) {
+    if (confidence < 5) {
       return 'Low';
     }
-    if (confidence < 0.8) {
+    if (confidence < 8) {
       return 'Medium';
     }
     return 'High';
@@ -138,7 +138,7 @@ export class EditorComponent implements OnInit {
       return start + (end - start) * factor;
     };
 
-    const factor = confidence; // Assuming confidence is between 0 and 1
+    const factor = confidence / 10;
 
     const hue = Math.round(interpolate(red, green, factor));
 

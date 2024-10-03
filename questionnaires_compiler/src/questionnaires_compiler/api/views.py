@@ -66,8 +66,10 @@ def answers(
                 "answer": "The answer to the question"
                 "confidence": "A confidence score between 1 and 10 that estimate how confident are you for this answer"
             }
-            If you can't answer the question with the information that are provided, reply with a JSON formatted as follow :
-            The variation in the language used in the question ans in the answers is not important.
+            The variation in the language used in the question and in the answers is not important.
+            You can give an answer with a low confidence if you are not sure.
+            
+            If the context that is provided does not contain any hint to answer the question, reply with a JSON formatted as follow :
             {
                 "answer": "NO-ANSWER"
                 "confidence": "0"

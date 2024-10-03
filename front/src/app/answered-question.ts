@@ -4,6 +4,11 @@ import { QuestionState } from './question-state';
 export interface AnsweredQuestion extends Question {
   answer: string;
   confidence: number;
-  references: string[];
+  references: {
+    question: string;
+    answer: string;
+    docId: string;
+    similarity: number;
+  }[],
   state: QuestionState;
 }
