@@ -1,3 +1,4 @@
+import datetime
 import logging
 from ast import literal_eval
 from typing import List, Optional, Dict
@@ -208,7 +209,7 @@ def extract_questions(
         response = {"error": str(e)}
     return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(('POST',))
+@api_view(('PUT',))
 @renderer_classes((JSONRenderer,))
 def update_answer(
         request: Request, version: str = None
@@ -224,26 +225,26 @@ def update_answer(
         action: str = request.data['action']
 
 
-        status = "Pending"
+        _status = "Pending"
         if action == "accept":
-            status = "Accepted"
+            _status = "Accepted"
         if action == "acceptPermanent":
-            status = "Accepted"
+            _status = "Accepted"
         elif action == "approve":
-            status = "Approved"
+            _status = "Approved"
         elif action == "reject":
-            status = "Rejected"
+            _status = "Rejected"
         
         MONGODB_COLLECTION.update_one(
             {"doc_id": doc_id, "question": question},
             {"$set": {"answer": answer, 
-                      "status": status, 
+                      "status": _status,
                       "category": category,
                       "accept_permanent": action == "acceptPermanent",
                       "answer_date" : datetime.datetime.now()}}
         )
 
-        return JsonResponse(status=status.HTTP_200_OK)
+        return JsonResponse(data={}, status=status.HTTP_200_OK)
     except Exception as e:
         response = {"error": str(e)}
     return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)

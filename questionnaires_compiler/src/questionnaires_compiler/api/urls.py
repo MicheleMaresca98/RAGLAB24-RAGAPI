@@ -15,6 +15,11 @@ urlpatterns = [
         views.extract_questions,
         name='extract_questions'
     ),
+    re_path(
+        r'^(?P<version>(v1))/update_answer/?$',
+        views.update_answer,
+        name='update_answer'
+    ),
 ]
 
 
