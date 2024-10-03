@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AnsweredQuestion } from './answered-question';
 import { Question } from './question';
-import { read, writeFileXLSX, utils } from 'xlsx';
+import { read, write, utils } from 'xlsx';
 import { firstValueFrom, lastValueFrom, Observable, Subject } from 'rxjs';
 
 interface QuestionExtraction {
@@ -99,6 +99,7 @@ export class RagService {
     );
 
     return answer.questions.map((question) => ({
+      doc_id: this.file?.name,
       text: question.question,
       category: question.category,
       sheetName: data.sheet_name,
