@@ -18,7 +18,7 @@ from rest_framework.decorators import (
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 
-from django_core.settings import vector_store, embeddings, MONGODB_COLLECTION
+from django_core.settings import vector_store, embeddings, MONGODB_COLLECTION, MONGODB_COLLECTION_DOCUMENTS
 from questionnaires_compiler.api.serializers.answer import (
     AnswersInputSerializer, AnswersOutputSerializer)
 
@@ -114,6 +114,17 @@ def answers(
 
         try:
             answer = literal_eval(llm_answers.content)
+            
+            MONGODB_COLLECTION_DOCUMENTS.update_one(
+                {"doc_id": doc_id, "question": question},
+                {"$set": {"answer": answer["answer"], 
+                        "category": category,
+                        "products": products,
+                        "status": "Pending",
+                        "answer_date": datetime.datetime.now()}},
+                upsert=True    
+            )
+
             response = {
                 "answer": answer["answer"],
                 "confidence": answer["confidence"],
@@ -164,7 +175,7 @@ def extract_questions(
 
         MONGODB_COLLECTION_DOCUMENTS.insert_one(
             {"doc_id": doc_id, "status": "Open"}
-        }
+        )
 
 
         system_prompt = """
