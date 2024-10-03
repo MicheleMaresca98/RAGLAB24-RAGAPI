@@ -18,6 +18,7 @@ from corsheaders.defaults import default_headers
 from langchain_aws import BedrockEmbeddings, ChatBedrock
 
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
+from pymongo.server_api import ServerApi
 
 from .configuration import (
     DatabaseConfig, ApplicationSettings, AdminSettings, MongoConfig)
@@ -128,11 +129,14 @@ mongo_config = MongoConfig()
 #     f'@{mongo_config.HOST}:{mongo_config.PORT}'
 # )
 mongo_connection_string = os.environ["MONGODB_ATLAS_CLUSTER_URI"]
+server_api = ServerApi('1')
+
 MONGO_CLIENT = pymongo.MongoClient(
-    mongo_connection_string
+    mongo_connection_string,
+    server_api=server_api
 )
 MONGO_DB = MONGO_CLIENT[mongo_config.DATABASE]
-MONGODB_COLLECTION = MONGO_DB['questions']
+MONGODB_COLLECTION = MONGO_DB['questions_2.7k']
 MONGODB_ATLAS_VECTOR_SEARCH_INDEX_NAME = "vector_index"
 
 embeddings = BedrockEmbeddings(model_id="cohere.embed-multilingual-v3")

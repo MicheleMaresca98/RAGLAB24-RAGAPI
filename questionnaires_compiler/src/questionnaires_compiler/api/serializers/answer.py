@@ -13,16 +13,6 @@ class AnswersInputSerializer(serializers.Serializer):
     )
 
 
-class ExtractQuestionInputSerializer(serializers.Serializer):
-    sheet_name = serializers.CharField()
-    lines = serializers.ListField(
-        child=serializers.ListField(
-            child=serializers.CharField()
-        ),
-        allow_empty=False,
-    )
-
-
 class ResponseItemSerializer(serializers.Serializer):
     text_field = serializers.CharField()
     number_field = serializers.DecimalField(max_digits=10, decimal_places=6)
