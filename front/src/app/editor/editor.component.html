@@ -90,6 +90,13 @@
         <button class="btn btn-secondary" (click)="nextQuestion()">Next</button>
       </div>
     </div>
+
+    <div class="export-button">
+      <button class="btn btn-dark btn-lg" (click)="export()">
+        <i class="fa fa-file-excel"></i>
+        Export to Excel
+      </button>
+    </div>
   </div>
 
   <div class="editor-references" *ngIf="currentQuestion">
