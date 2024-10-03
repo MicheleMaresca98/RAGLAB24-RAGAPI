@@ -263,3 +263,25 @@ def update_answer(
     except Exception as e:
         response = {"error": str(e)}
     return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def finish_document(
+        request: Request, version: str = None
+) -> JsonResponse:
+    # in_serializer = ExtractQuestionInputSerializer(data=request.data)
+    # in_serializer.is_valid(raise_exception=True)
+    print(request.data)
+    try:
+        doc_id: str = request.data['doc_id']
+                
+        MONGODB_COLLECTION_DOCUMENTS.update_one(
+            {"doc_id": doc_id, "question": question},
+            {"$set": {"status": "Done"}}
+        )
+
+        return JsonResponse(status=status.HTTP_200_OK)
+    except Exception as e:
+        response = {"error": str(e)}
+    return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
+

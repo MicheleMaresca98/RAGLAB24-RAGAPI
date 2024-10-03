@@ -20,6 +20,11 @@ urlpatterns = [
         views.update_answer,
         name='update_answer'
     ),
+    re_path(
+        r'^(?P<version>(v1))/finish_document/?$',
+        views.finish_document,
+        name='finish_document'
+    ),
 ]
 
 
