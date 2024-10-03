@@ -107,9 +107,12 @@
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .editor-container {
+  flex: 1;
   margin: 40px;
   width: 800px;
   background-color: #fff;
@@ -120,6 +123,17 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.export-button {
+  display: flex;
+  width: 800px;
+
+  button {
+    width: 100%;
+    margin: 0 0 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .editor-question-counter {

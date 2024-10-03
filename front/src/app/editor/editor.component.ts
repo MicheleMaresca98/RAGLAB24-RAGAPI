@@ -55,6 +55,7 @@ export class EditorComponent implements OnInit {
               state: 'Waiting' as QuestionState,
               confidence: 0,
               references: [],
+              position: question.position,
             }));
             this.questions.push(...extractedQuestions);
           }
@@ -190,5 +191,9 @@ export class EditorComponent implements OnInit {
       this.currentAnswer.nativeElement.focus();
       this.currentAnswer.nativeElement.select();
     }, 0);
+  }
+
+  export() {
+    this.ragService.exportToExcel(this.questions);
   }
 }

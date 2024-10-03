@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AnsweredQuestion } from './answered-question';
 import { Question } from './question';
-import { read, write, utils } from 'xlsx';
+import { read, write, utils, WorkSheet } from 'xlsx';
 import { firstValueFrom, lastValueFrom, Observable, Subject } from 'rxjs';
+import { parse } from 'papaparse';
 
 interface QuestionExtraction {
   questions: Question[];
@@ -58,17 +59,13 @@ export class RagService {
 
     for (const sheetName of workbook.SheetNames) {
       const sheet = workbook.Sheets[sheetName];
-      const sheetDataJson = utils.sheet_to_json(sheet);
+      const sheetDataJson = this.sheetToJson(sheet);
       chunkCount += Math.ceil(sheetDataJson.length / chunkSize);
     }
 
     for (const sheetName of workbook.SheetNames) {
       const sheet = workbook.Sheets[sheetName];
-      const sheetDataJson = utils
-        .sheet_to_json(sheet)
-        .map((row: any) =>
-          Object.values(row).map((cell: any) => cell.toString())
-        );
+      const sheetDataJson = this.sheetToJson(sheet);
 
       for (let i = 0; i < sheetDataJson.length; i += chunkSize) {
         const chunk = sheetDataJson.slice(i, i + chunkSize);
@@ -77,8 +74,8 @@ export class RagService {
           lines: chunk as string[][],
         };
         console.log('Sending chunk to API: ', data);
-
-        const answer = await this.callExtractQuestionAPI(data);
+        const answer = await this.callExtractQuestionAPI(i, data);
+        console.log('Answer received: ', answer);
         chunkCounter++;
         subject.next(chunkCounter / chunkCount);
         subject.next(answer);
@@ -87,15 +84,37 @@ export class RagService {
     subject.complete();
   }
 
-  private async callExtractQuestionAPI(data: {
-    sheet_name: string;
-    lines: string[][];
-  }): Promise<Question[]> {
+  private sheetToJson(sheet: WorkSheet): string[][] {
+    const sheetDataCsv = utils.sheet_to_csv(sheet);
+    const sheetDataJson = parse(sheetDataCsv, { header: false })
+      .data as string[][];
+    // Remove empty rows in the end
+    while (
+      sheetDataJson[sheetDataJson.length - 1].every((cell) => cell === '')
+    ) {
+      sheetDataJson.pop();
+    }
+    return sheetDataJson;
+  }
+
+  private async callExtractQuestionAPI(
+    firstRow: number,
+    data: {
+      sheet_name: string;
+      lines: string[][];
+    }
+  ): Promise<Question[]> {
     const answer = await lastValueFrom(
-      this.http.post<{ questions: { question: string; category: string }[] }>(
-        this.EXTRACT_QUESTION_API,
-        data
-      )
+      this.http.post<{
+        questions: {
+          question: string;
+          category: string;
+          position: {
+            line: number;
+            cell: number;
+          };
+        }[];
+      }>(this.EXTRACT_QUESTION_API, data)
     );
 
     return answer.questions.map((question) => ({
@@ -103,6 +122,10 @@ export class RagService {
       text: question.question,
       category: question.category,
       sheetName: data.sheet_name,
+      position: {
+        row: question.position.line + firstRow,
+        column: question.position.cell,
+      },
     }));
   }
 
@@ -123,15 +146,15 @@ export class RagService {
         answer: string;
         confidence: number;
         used_data: {
-          question: string
-          answer: string
-          doc_id: string
-          similarity: number
+          question: string;
+          answer: string;
+          doc_id: string;
+          similarity: number;
         }[];
       }>(this.ASK_QUESTION_API, {
         question: question.text,
         category: question.category,
-        products: []
+        products: [],
       })
     );
     return {
@@ -143,16 +166,47 @@ export class RagService {
         docId: data.doc_id,
         similarity: data.similarity,
       })),
+      position: question.position,
       category: question.category,
       text: question.text,
       sheetName: question.sheetName,
       state: 'Human',
-    }
-
+    };
   }
 
   async updateQuestion(question: AnsweredQuestion) {
     console.log('Question updated: ', question);
     await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+
+  async exportToExcel(questions: AnsweredQuestion[]) {
+    if (!this.file) {
+      console.error('No file selected');
+      return;
+    }
+    const buffer = await this.file?.arrayBuffer();
+    const workbook = read(buffer);
+
+    for (const question of questions) {
+      const sheet = workbook.Sheets[question.sheetName];
+      const cellPosition = utils.encode_cell({
+        r: question.position.row,
+        c: question.position.column + 1,
+      });
+      let cell = sheet[cellPosition];
+      if (!cell) {
+        cell = { t: 's', v: '' };
+        sheet[cellPosition] = cell;
+      }
+      cell.v = question.answer;
+    }
+
+    const bufferOut = write(workbook, { type: 'array', bookType: 'xlsx' });
+    const blob = new Blob([bufferOut], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = this.file.name;
+    a.click();
   }
 }
