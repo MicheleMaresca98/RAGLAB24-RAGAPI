@@ -18,7 +18,7 @@ from rest_framework.request import Request
 
 from django_core.settings import vector_store, embeddings, MONGODB_COLLECTION
 from questionnaires_compiler.api.serializers.answer import (
-    AnswersInputSerializer, AnswersOutputSerializer, ExtractQuestionInputSerializer)
+    AnswersInputSerializer, AnswersOutputSerializer)
 
 log = logging.getLogger(__name__)
 
@@ -201,6 +201,18 @@ def extract_questions(
         for d in questions_list:
             if "question" not in d or "category" not in d:
                 continue
+
+            for line_index, line in enumerate(lines):
+                for cell_index, cell in enumerate(line):
+                    if d["question"] in cell:
+                        d["position"] = {"line": line_index, "cell": cell_index}
+                        break
+                if "position" in d:
+                    break
+
+            if "position" not in d:
+                d["position"] = {"line": -1, "cell": -1}
+
             cleaned_questions_list.append(d)
 
         return JsonResponse(data={"questions": cleaned_questions_list}, status=status.HTTP_200_OK)
