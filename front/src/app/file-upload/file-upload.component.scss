@@ -1,0 +1,53 @@
+.drag-drop-zone {
+  height: 180px;
+  border: 2px dashed #00a69d;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  background-color: #cef6f4;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  color: #00a69d;
+}
+
+.drag-drop-zone.dragover {
+  background-color: #e9f1ff;
+  border-color: #0056b3;
+}
+
+.form-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+select {
+  margin-bottom: 20px;
+}
+
+button {
+  width: 100%;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  max-width: 100%;
+  position: relative;
+}
+
+.remove-btn {
+  color: #ff0000;
+  cursor: pointer;
+  font-size: 18px;
+}
