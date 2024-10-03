@@ -15,8 +15,7 @@ from pathlib import Path
 
 import pymongo
 from corsheaders.defaults import default_headers
-from langchain_aws import BedrockEmbeddings, ChatBedrock
-
+from langchain_aws import BedrockEmbeddings
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo.server_api import ServerApi
 

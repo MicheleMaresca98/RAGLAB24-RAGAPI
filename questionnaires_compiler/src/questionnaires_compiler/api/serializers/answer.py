@@ -5,6 +5,7 @@ from questionnaires_compiler.core.schemas import QuestionCategory
 
 class AnswersInputSerializer(serializers.Serializer):
     question = serializers.CharField()
+    doc_id = serializers.CharField()
     category = serializers.CharField()
     products = serializers.ListField(
         child=serializers.CharField(),

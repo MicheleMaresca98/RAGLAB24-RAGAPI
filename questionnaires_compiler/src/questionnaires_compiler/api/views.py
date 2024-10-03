@@ -1,7 +1,6 @@
 import datetime
 import logging
 from ast import literal_eval
-from datetime import datetime
 from typing import List, Optional, Dict
 
 from bson import ObjectId
@@ -18,7 +17,8 @@ from rest_framework.decorators import (
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 
-from django_core.settings import vector_store, embeddings, MONGODB_COLLECTION, MONGODB_COLLECTION_DOCUMENTS
+from django_core.settings import (
+    vector_store, embeddings, MONGODB_COLLECTION, MONGODB_COLLECTION_DOCUMENTS)
 from questionnaires_compiler.api.serializers.answer import (
     AnswersInputSerializer, AnswersOutputSerializer)
 
@@ -34,6 +34,7 @@ def answers(
     in_serializer.is_valid(raise_exception=True)
     try:
         question: str = in_serializer.data['question']
+        doc_id: str = in_serializer.data['doc_id']
         category: str = in_serializer.data['category']
         products: Optional[List[str]] = in_serializer.data.get('products', None)
 
@@ -114,15 +115,16 @@ def answers(
 
         try:
             answer = literal_eval(llm_answers.content)
-            
+            question_embedding = embeddings.embed_query(question)
             MONGODB_COLLECTION_DOCUMENTS.update_one(
                 {"doc_id": doc_id, "question": question},
-                {"$set": {"answer": answer["answer"], 
+                {"$set": {"answer": answer["answer"],
                         "category": category,
                         "products": products,
+                        "question_embedding": question_embedding,
                         "status": "Pending",
                         "answer_date": datetime.datetime.now()}},
-                upsert=True    
+                upsert=True
             )
 
             response = {
