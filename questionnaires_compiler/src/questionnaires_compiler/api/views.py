@@ -208,3 +208,43 @@ def extract_questions(
         response = {"error": str(e)}
     return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(('POST',))
+@renderer_classes((JSONRenderer,))
+def update_answer(
+        request: Request, version: str = None
+) -> JsonResponse:
+    # in_serializer = ExtractQuestionInputSerializer(data=request.data)
+    # in_serializer.is_valid(raise_exception=True)
+    print(request.data)
+    try:
+        doc_id: str = request.data['doc_id']
+        question: str = request.data['question']
+        category: str = request.data['category']
+        answer: str = request.data['answer']
+        action: str = request.data['action']
+
+
+        status = "Pending"
+        if action == "accept":
+            status = "Accepted"
+        if action == "acceptPermanent":
+            status = "Accepted"
+        elif action == "approve":
+            status = "Approved"
+        elif action == "reject":
+            status = "Rejected"
+        
+        MONGODB_COLLECTION.update_one(
+            {"doc_id": doc_id, "question": question},
+            {"$set": {"answer": answer, 
+                      "status": status, 
+                      "category": category,
+                      "accept_permanent": action == "acceptPermanent",
+                      "answer_date" : datetime.datetime.now()}}
+        )
+
+        return JsonResponse(status=status.HTTP_200_OK)
+    except Exception as e:
+        response = {"error": str(e)}
+    return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
+
