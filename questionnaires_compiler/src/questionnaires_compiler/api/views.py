@@ -155,8 +155,15 @@ def extract_questions(
     # in_serializer.is_valid(raise_exception=True)
     print(request.data)
     try:
+        doc_id: str = request.data['doc_id']
         sheet_name: str = request.data['sheet_name']
         lines: List[List[str]] = request.data['lines']
+
+
+        MONGODB_COLLECTION_DOCUMENTS.insert_one(
+            {"doc_id": doc_id, "status": "Open"}
+        }
+
 
         system_prompt = """
             You are a helpful assistant.
