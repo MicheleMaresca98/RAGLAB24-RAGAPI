@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { lastValueFrom, tap } from 'rxjs';
 import { QuestionState } from '../question-state';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-editor',
@@ -25,8 +26,11 @@ export class EditorComponent implements OnInit {
 
   progress = 0;
 
-  constructor(private ragService: RagService) {
+  constructor(private ragService: RagService, private router: Router) {
     this.categories = this.ragService.categories;
+    if (!ragService.file) {
+      this.router.navigate(['/']);
+    }
   }
 
   ngOnInit(): void {
