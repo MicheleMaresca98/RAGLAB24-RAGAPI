@@ -66,7 +66,7 @@
       <div class="editor-confidence">
         <div
           class="editor-confidence-bar"
-          [style.width]="currentQuestion.confidence * 100 + '%'"
+          [style.width]="currentQuestion.confidence * 10 + '%'"
           [style.backgroundColor]="confidenceColor(currentQuestion.confidence)"
         ></div>
         <div class="editor-confidence-label">
@@ -95,7 +95,9 @@
   <div class="editor-references" *ngIf="currentQuestion">
     <div class="editor-references-label">References</div>
     <div *ngFor="let reference of currentQuestion.references">
-      {{ reference }}
+      <div class="editor-references-source">{{ reference.docId }}</div>
+      <div class="editor-references-question">{{ reference.question }}</div>
+      <div class="editor-references-answer">{{ reference.answer }}</div>
     </div>
   </div>
 </div>

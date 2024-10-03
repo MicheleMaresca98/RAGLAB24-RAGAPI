@@ -30,6 +30,8 @@ export class RagService {
   readonly EXTRACT_QUESTION_API =
     'http://localhost:8000/api/v1/extract_questions';
 
+  readonly ASK_QUESTION_API = 'http://localhost:8000/api/v1/answers';
+
   constructor(private http: HttpClient) {}
 
   extractQuestions(): Observable<Question[] | number> {
@@ -105,16 +107,47 @@ export class RagService {
 
   async askQuestion(question: Question): Promise<AnsweredQuestion> {
     console.log('Question asked: ', question);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    // return {
+    //   category: question.category,
+    //   text: question.text,
+    //   sheetName: question.sheetName,
+    //   state: 'Human',
+    //   answer: `Answer to ${question.text}`,
+    //   confidence: Math.random(),
+    //   references: ['Reference 1', 'Reference 2'],
+    // };
+    const answer = await lastValueFrom(
+      this.http.post<{
+        answer: string;
+        confidence: number;
+        used_data: {
+          question: string
+          answer: string
+          doc_id: string
+          similarity: number
+        }[];
+      }>(this.ASK_QUESTION_API, {
+        question: question.text,
+        category: question.category,
+        products: []
+      })
+    );
     return {
+      answer: answer.answer,
+      confidence: answer.confidence,
+      references: answer.used_data.map((data) => ({
+        question: data.question,
+        answer: data.answer,
+        docId: data.doc_id,
+        similarity: data.similarity,
+      })),
       category: question.category,
       text: question.text,
       sheetName: question.sheetName,
       state: 'Human',
-      answer: `Answer to ${question.text}`,
-      confidence: Math.random(),
-      references: ['Reference 1', 'Reference 2'],
-    };
+    }
+
   }
 
   async updateQuestion(question: AnsweredQuestion) {
