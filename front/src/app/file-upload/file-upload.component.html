@@ -9,6 +9,7 @@
     class="form-select"
     multiple
     aria-label="Select applicable products"
+    [(ngModel)]="selectedProducts"
   >
     <option *ngFor="let product of products" [value]="product.id">
       {{ product.label }}
@@ -43,5 +44,12 @@
     <span class="remove-btn" (click)="onRemoveFile()">&times;</span>
   </div>
 
-  <button class="btn btn-primary mt-4" type="submit">Analyze</button>
+  <button
+    class="btn btn-primary mt-4"
+    type="submit"
+    [disabled]="cannotAnalyze()"
+    (click)="onAnalyze()"
+  >
+    Analyze
+  </button>
 </div>

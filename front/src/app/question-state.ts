@@ -1,0 +1,1 @@
+export type QuestionState = 'Human' | 'Accepted' | 'Rejected' | 'Edited' | 'Waiting';

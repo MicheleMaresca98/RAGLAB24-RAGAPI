@@ -1,0 +1,22 @@
+<div class="question-list">
+  <div
+    class="question"
+    *ngFor="let question of questions; let i = index"
+    [ngClass]="{ 'question-current': i === questionIndex }"
+    (click)="selectQuestion(i)"
+  >
+    <div class="question-info">
+      <div class="question-category">{{ question.category }}</div>
+      <div class="question-text">{{ question.text }}</div>
+      <div class="question-answer">{{ question.answer }}</div>
+    </div>
+    <div class="question-state">
+      <i
+        class="question-state-icon fa fa-2x"
+        [ngClass]="questionStateClass(question)"
+      ></i>
+    </div>
+  </div>
+</div>
+
+<div class="editor"></div>

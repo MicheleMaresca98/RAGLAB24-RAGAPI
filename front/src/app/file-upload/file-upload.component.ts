@@ -2,11 +2,14 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RagService } from '../rag.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-upload',
   standalone: true,
-  imports: [CommonModule, NgbDropdownModule],
+  imports: [CommonModule, FormsModule, NgbDropdownModule],
   templateUrl: './file-upload.component.html',
   styleUrl: './file-upload.component.scss',
 })
@@ -23,7 +26,11 @@ export class FileUploadComponent {
 
   dragover = false;
 
+  selectedProducts: string[] = [];
+
   file?: File;
+
+  constructor(private ragService: RagService, private router: Router) {}
 
   // dropZone click event handler
   dropZoneClick() {
@@ -58,5 +65,15 @@ export class FileUploadComponent {
 
   onRemoveFile() {
     this.file = undefined;
+  }
+
+  cannotAnalyze() {
+    return !this.file || this.selectedProducts.length === 0;
+  }
+
+  onAnalyze() {
+    this.ragService.file = this.file;
+    this.ragService.selectedProducts = this.selectedProducts;
+    this.router.navigate(['/editor']);
   }
 }
