@@ -3,6 +3,8 @@ import { AnsweredQuestion } from '../answered-question';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { lastValueFrom, tap } from 'rxjs';
+import { QuestionState } from '../question-state';
 
 @Component({
   selector: 'app-editor',
@@ -21,6 +23,8 @@ export class EditorComponent implements OnInit {
 
   readonly categories: { name: string; label: string }[];
 
+  progress = 0;
+
   constructor(private ragService: RagService) {
     this.categories = this.ragService.categories;
   }
@@ -30,16 +34,28 @@ export class EditorComponent implements OnInit {
   }
 
   async loadQuestions() {
-    const extractedQuestions = await this.ragService.extractQuestions();
-    this.questions = extractedQuestions.questions.map((question) => ({
-      text: question.text,
-      sheetName: question.sheetName,
-      category: question.category,
-      answer: '',
-      state: 'Waiting',
-    }));
-
     this.questionIndex = 0;
+
+    await lastValueFrom(
+      this.ragService.extractQuestions().pipe(
+        tap((res) => {
+          if (typeof res === 'number') {
+            console.log('progress: ', res);
+            this.progress = res;
+          } else {
+            const extractedQuestions = res.map((question) => ({
+              text: question.text,
+              sheetName: question.sheetName,
+              category: question.category,
+              answer: '',
+              state: 'Waiting' as QuestionState,
+            }));
+            this.questions.push(...extractedQuestions);
+          }
+        })
+      )
+    );
+
     for (const [index, question] of this.questions.entries()) {
       const answeredQuestion = await this.ragService.askQuestion(question);
       this.questions[index] = answeredQuestion;
