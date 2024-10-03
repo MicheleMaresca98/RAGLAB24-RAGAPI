@@ -1,6 +1,7 @@
 import datetime
 import logging
 from ast import literal_eval
+from datetime import datetime
 from typing import List, Optional, Dict
 
 from bson import ObjectId
@@ -53,10 +54,10 @@ def answers(
         )
         relevant_docs = apply_threshold_and_format_docs(found_docs=found_docs)
         system_prompt = '''
-            You are a helpful assistant.
+            You are a multilingual helpful assistant.
             Your mission is to answer to questions.
             To reply to the a question you only use the information that are provided in the text.
-
+            
             Here is the process to follow to answer to a question :
             1: Carefully analyse the information that are provided.
 
@@ -65,7 +66,8 @@ def answers(
                 "answer": "The answer to the question"
                 "confidence": "A confidence score between 1 and 10 that estimate how confident are you for this answer"
             }
-            If the information provided does not contain the answer to the asked question reply:
+            If you can't answer the question with the information that are provided, reply with a JSON formatted as follow :
+            The variation in the language used in the question ans in the answers is not important.
             {
                 "answer": "NO-ANSWER"
                 "confidence": "0"
@@ -77,13 +79,11 @@ def answers(
 
         prompt_template = '''
             Can you please provide an answer to this question: {{  question  }}
-
-            Use only this information :
+            
+            Context:
             {% for item in relevant_docs %}
-            {
-                "question": "{{ item.question }}",
-                "answer": "{{ item.answer  }}"
-            }
+            "question": "{{ item.question }}",
+            "answer": "{{ item.answer  }}"
             {% endfor %}
         '''
         prompt_template = PromptTemplate(
@@ -106,6 +106,8 @@ def answers(
                 "human", human_prompt,
             )
         ]
+
+        #log.info(f"human_prompt: {human_prompt}")
         llm_answers = llm.invoke(messages)
 
         try:
@@ -118,7 +120,7 @@ def answers(
             return JsonResponse(data=response, status=status.HTTP_200_OK)
         except Exception as e:
             response = {"error": str(e)}
-            return JsonResponse(data=response,status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:
         response = {"error": str(e)}
@@ -126,7 +128,7 @@ def answers(
 
 
 def apply_threshold_and_format_docs(
-    found_docs: List[Document], threshold: float = 0.8
+        found_docs: List[Document], threshold: float = 0.8
 ) -> List[Dict]:
     relevant_docs = []
     for doc in found_docs:
@@ -137,7 +139,8 @@ def apply_threshold_and_format_docs(
             relevant_doc = {
                 "question": question['question'],
                 "answer": doc.metadata['answer'],
-                "doc_id": doc.metadata['doc_id']
+                "doc_id": doc.metadata['doc_id'],
+                "similarity": doc.metadata['score']
             }
             relevant_docs.append(relevant_doc)
     return relevant_docs
@@ -253,11 +256,10 @@ def update_answer(
                       "status": _status,
                       "category": category,
                       "accept_permanent": action == "acceptPermanent",
-                      "answer_date" : datetime.datetime.now()}}
+                      "answer_date": datetime.datetime.now()}}
         )
 
         return JsonResponse(data={}, status=status.HTTP_200_OK)
     except Exception as e:
         response = {"error": str(e)}
     return JsonResponse(data=response, status=status.HTTP_400_BAD_REQUEST)
-
