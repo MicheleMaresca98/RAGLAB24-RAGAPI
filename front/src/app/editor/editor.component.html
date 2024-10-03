@@ -63,6 +63,17 @@
         (keydown.shift.enter)="onShiftEnter($event)"
       ></textarea>
 
+      <div class="editor-confidence">
+        <div
+          class="editor-confidence-bar"
+          [style.width]="currentQuestion.confidence * 100 + '%'"
+          [style.backgroundColor]="confidenceColor(currentQuestion.confidence)"
+        ></div>
+        <div class="editor-confidence-label">
+          Confidence: {{ confidenceLabel(currentQuestion.confidence) }}
+        </div>
+      </div>
+
       <div class="editor-buttons">
         <button class="btn btn-secondary" (click)="previousQuestion()">
           Previous

@@ -112,6 +112,8 @@ export class RagService {
       sheetName: question.sheetName,
       state: 'Human',
       answer: `Answer to ${question.text}`,
+      confidence: Math.random(),
+      references: ['Reference 1', 'Reference 2'],
     };
   }
 

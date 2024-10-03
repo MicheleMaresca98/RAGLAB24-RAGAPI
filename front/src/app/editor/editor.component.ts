@@ -53,6 +53,8 @@ export class EditorComponent implements OnInit {
               category: question.category,
               answer: '',
               state: 'Waiting' as QuestionState,
+              confidence: 0,
+              references: [],
             }));
             this.questions.push(...extractedQuestions);
           }
@@ -116,6 +118,31 @@ export class EditorComponent implements OnInit {
       case 'Waiting':
         return 'Waiting';
     }
+  }
+
+  confidenceLabel(confidence: number) {
+    if (confidence < 0.5) {
+      return 'Low';
+    }
+    if (confidence < 0.8) {
+      return 'Medium';
+    }
+    return 'High';
+  }
+
+  confidenceColor(confidence: number) {
+    const red = 0;
+    const green = 90;
+
+    const interpolate = (start: number, end: number, factor: number) => {
+      return start + (end - start) * factor;
+    };
+
+    const factor = confidence; // Assuming confidence is between 0 and 1
+
+    const hue = Math.round(interpolate(red, green, factor));
+
+    return `hsl(${hue} 80% 40%)`;
   }
 
   selectQuestion(index: number) {

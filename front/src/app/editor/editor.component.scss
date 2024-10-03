@@ -124,12 +124,33 @@
 
 .editor-question-counter {
     font-size: 12px;
-    color: #00a69d;
 }
 
 .editor-question-text {
     font-size: 18px;
     font-weight: 500;
+}
+
+.editor-confidence-label {
+    font-size: 13px;
+    text-align: center;
+    position: relative;
+}
+
+.editor-confidence {
+    position: relative;
+    overflow: hidden;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.editor-confidence-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #00a69d;
+    height: 100%;
 }
 
 .editor-answer {
