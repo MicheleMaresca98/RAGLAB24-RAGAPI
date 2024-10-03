@@ -1,7 +1,25 @@
 :host {
     display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.progress {
+    min-height: 5px;
+    height: 5px;
+}
+
+.progress-bar {
+    background-color: #00a69d;
+    height: 5px;
+}
+
+.wrapper {
+    flex:1;
+    display: flex;
     flex-direction: row;
     height: 100%;
+    min-height: 0;
 }
 
 .question-list {
@@ -20,6 +38,7 @@
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     flex-direction: row;
+    gap: 20px;
     height: 110px;
     cursor: pointer;
 }
@@ -30,6 +49,7 @@
 
 .question-info {
     flex: 1;
+    min-width: 0;
 }
 
 .question-state {
@@ -46,11 +66,19 @@
     font-size: 14px;
     font-weight: 500;
     margin-top: 5px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .question-answer {
     font-size: 13px;
     margin-top: 5px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .question-state {
@@ -96,12 +124,33 @@
 
 .editor-question-counter {
     font-size: 12px;
-    color: #00a69d;
 }
 
 .editor-question-text {
     font-size: 18px;
     font-weight: 500;
+}
+
+.editor-confidence-label {
+    font-size: 13px;
+    text-align: center;
+    position: relative;
+}
+
+.editor-confidence {
+    position: relative;
+    overflow: hidden;
+    height: 20px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.editor-confidence-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #00a69d;
+    height: 100%;
 }
 
 .editor-answer {
