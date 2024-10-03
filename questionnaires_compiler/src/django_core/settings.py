@@ -138,7 +138,7 @@ MONGO_CLIENT = pymongo.MongoClient(
 MONGO_DB = MONGO_CLIENT[mongo_config.DATABASE]
 MONGODB_COLLECTION = MONGO_DB['questions_2.7k']
 # MONGODB_COLLECTION = MONGO_DB['collection2']
-MONGODB_COLLECTION_DOCUMENT = MONGO_DB['documents']
+MONGODB_COLLECTION_DOCUMENTS = MONGO_DB['documents']
 MONGODB_ATLAS_VECTOR_SEARCH_INDEX_NAME = "vector_index"
 
 embeddings = BedrockEmbeddings(model_id="cohere.embed-multilingual-v3")
