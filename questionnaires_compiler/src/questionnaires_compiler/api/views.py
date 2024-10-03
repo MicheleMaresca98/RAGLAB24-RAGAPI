@@ -177,7 +177,7 @@ def extract_questions(
 
         MONGODB_COLLECTION_DOCUMENTS.update_one(
             {"doc_id": doc_id},
-            {"doc_id": doc_id, "status": "Open"},
+            {"$set": {"doc_id": doc_id, "status": "Open"}},
             upsert=True
         )
 
