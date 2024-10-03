@@ -9,7 +9,12 @@ urlpatterns = [
         r'^(?P<version>(v1))/answers/?$',
         views.answers,
         name='questions'
-    )
+    ),
+    re_path(
+        r'^(?P<version>(v1))/extract_questions/?$',
+        views.extract_questions,
+        name='extract_questions'
+    ),
 ]
 
 
