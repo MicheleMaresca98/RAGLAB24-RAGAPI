@@ -85,10 +85,17 @@
           Accept
         </button>
         <button class="btn btn-dark" (click)="updateCurrentQuestion()">
-          Accept for all
+          Accept for 1 year
         </button>
         <button class="btn btn-secondary" (click)="nextQuestion()">Next</button>
       </div>
+    </div>
+  </div>
+
+  <div class="editor-references" *ngIf="currentQuestion">
+    <div class="editor-references-label">References</div>
+    <div *ngFor="let reference of currentQuestion.references">
+      {{ reference }}
     </div>
   </div>
 </div>
