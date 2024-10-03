@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from questionnaires_compiler.core.schemas import QuestionCategory
 
+
 class AnswersInputSerializer(serializers.Serializer):
     question = serializers.CharField()
     category = serializers.CharField()
@@ -10,12 +11,17 @@ class AnswersInputSerializer(serializers.Serializer):
         allow_empty=True,
         default=list,
     )
-    # category = serializers.ChoiceField(
-    #     choices=[
-    #         (category.value, category.name) for category in QuestionCategory
-    #     ],
-    #     required=False
-    # )
+
+
+class ExtractQuestionInputSerializer(serializers.Serializer):
+    sheet_name = serializers.CharField()
+    lines = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.CharField()
+        ),
+        allow_empty=False,
+    )
+
 
 class ResponseItemSerializer(serializers.Serializer):
     text_field = serializers.CharField()
