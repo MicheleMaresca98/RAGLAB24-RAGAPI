@@ -1,0 +1,69 @@
+<div class="question-list">
+  <div
+    class="question"
+    *ngFor="let question of questions; let i = index"
+    [ngClass]="{ 'question-current': i === questionIndex }"
+    (click)="selectQuestion(i)"
+  >
+    <div class="question-info">
+      <div class="question-category">
+        {{ categoryLabel(question.category) }}
+      </div>
+      <div class="question-text">{{ question.text }}</div>
+      <div class="question-answer">{{ question.answer }}</div>
+    </div>
+    <div class="question-state">
+      <i
+        class="question-state-icon fa fa-2x"
+        [ngClass]="questionStateClass(question)"
+      ></i>
+      <div class="question-state-text">{{ questionStateText(question) }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="editor" *ngIf="currentQuestion">
+  <div class="editor-container">
+    <div class="editor-header">
+      <div class="editor-question">
+        <div class="editor-question-counter">
+          Question {{ questionIndex + 1 }} of {{ questions.length }}
+        </div>
+        <div class="editor-question-text">
+          {{ currentQuestion.text }}
+        </div>
+      </div>
+    </div>
+
+    <select class="form-select" [(ngModel)]="currentQuestion.category">
+      <option *ngFor="let category of categories" [value]="category.name">
+        {{ category.label }}
+      </option>
+    </select>
+
+    <textarea
+      #currentAnswer
+      class="form-control editor-answer"
+      id="editor"
+      rows="3"
+      [(ngModel)]="currentQuestion.answer"
+      (keydown.shift.enter)="onShiftEnter($event)"
+    ></textarea>
+
+    <div class="editor-buttons">
+      <button class="btn btn-secondary" (click)="previousQuestion()">
+        Previous
+      </button>
+      <button
+        class="btn btn-primary editor-button-accept"
+        (click)="updateCurrentQuestion()"
+      >
+        Accept
+      </button>
+      <button class="btn btn-dark" (click)="updateCurrentQuestion()">
+        Accept for all
+      </button>
+      <button class="btn btn-secondary" (click)="nextQuestion()">Next</button>
+    </div>
+  </div>
+</div>

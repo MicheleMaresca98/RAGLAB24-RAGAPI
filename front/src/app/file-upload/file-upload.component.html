@@ -1,0 +1,55 @@
+<div class="form-container">
+  <label for="productSelect" class="form-label"
+    >Select applicable products</label
+  >
+
+  <select
+    class="mt-4"
+    id="productSelect"
+    class="form-select"
+    multiple
+    aria-label="Select applicable products"
+    [(ngModel)]="selectedProducts"
+  >
+    <option *ngFor="let product of products" [value]="product.id">
+      {{ product.label }}
+    </option>
+  </select>
+
+  <div
+    id="dropZone"
+    class="drag-drop-zone"
+    [class.dragover]="dragover"
+    (click)="dropZoneClick()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    <i class="fas fa-cloud-upload-alt fa-2x"></i>
+    <p class="mt-5">
+      Drag and drop your files here or
+      <span style="text-decoration: underline">click here</span>
+    </p>
+    <input
+      #fileInput
+      type="file"
+      id="formFile"
+      class="d-none"
+      (change)="onFileChange($event)"
+    />
+  </div>
+
+  <div *ngIf="file" class="mt-4 file-item">
+    <span>{{ file.name }}</span>
+    <span class="remove-btn" (click)="onRemoveFile()">&times;</span>
+  </div>
+
+  <button
+    class="btn btn-primary mt-4"
+    type="submit"
+    [disabled]="cannotAnalyze()"
+    (click)="onAnalyze()"
+  >
+    Analyze
+  </button>
+</div>

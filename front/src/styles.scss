@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Poppins font. */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Import Font Awesome icons. */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+/* Change the base theme color. */
+$theme-colors: (
+  "primary": #00a69d,
+  "secondary": #ceb99d,
+  "dark": #343a40,
+  "danger": #ff4136
+);
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #f7f9fc;
+}
+
+html, body {
+  height: 100%;
+}
+
