@@ -276,7 +276,7 @@ def finish_document(
         doc_id: str = request.data['doc_id']
                 
         MONGODB_COLLECTION_DOCUMENTS.update_one(
-            {"doc_id": doc_id, "question": question},
+            {"doc_id": doc_id},
             {"$set": {"status": "Done"}}
         )
 
