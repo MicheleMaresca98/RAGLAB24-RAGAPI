@@ -175,8 +175,10 @@ def extract_questions(
         lines: List[List[str]] = request.data['lines']
 
 
-        MONGODB_COLLECTION_DOCUMENTS.insert_one(
-            {"doc_id": doc_id, "status": "Open"}
+        MONGODB_COLLECTION_DOCUMENTS.update_one(
+            {"doc_id": doc_id},
+            {"doc_id": doc_id, "status": "Open"},
+            upsert=True
         )
 
 
