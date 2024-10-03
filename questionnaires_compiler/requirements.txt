@@ -1,0 +1,17 @@
+django~=4.2.7
+uWSGI~=2.0.22
+djangorestframework~=3.14.0
+psycopg2-binary~=2.9.9
+pydantic~=2.4
+pydantic-settings~=2.0
+django-health-check~=3.17
+django-filter==22.1
+django-cors-headers~=3.13.0
+pyjwt[crypto]==2.8.0
+pymongo==4.9.1
+pandas==2.2.3
+openpyxl==3.1.5
+celery>=5.2.3,<6
+langchain-aws==0.2.1
+langchain-mongodb==0.2.0
+langchain==0.3.1

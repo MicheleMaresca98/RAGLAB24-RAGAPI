@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+  questionnaires_compiler:
+    build:
+      context: ./questionnaires_compiler
+      target: builder
+    image: questionnaires_compiler/api:local
+    ports:
+      - "8000:8000"
+      - "9999:5678"
+    expose:
+      - 8000
+    command: "-start-debug"
+    env_file: ./questionnaires_compiler/envs/env.questionnaires_compiler
+    networks:
+      questionnaires-compiler-network:
+    volumes:
+      - "./questionnaires_compiler/src/:/src"
+    depends_on:
+      - db
+      - mongodb
+
+  mongodb:
+    image: mongo:5.0
+    env_file: ./database/envs/mongo-secrets
+    ports:
+      - "27018:27017"
+    expose:
+      - "27017"
+    networks:
+      questionnaires-compiler-network:
+    volumes:
+      - mongodb_data:/data/db
+      - ./database/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+  db:
+    image: postgres:15
+    env_file: ./database/envs/postgres-secrets
+    networks:
+      questionnaires-compiler-network:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  nginx:
+    image: nginx:1.23.2-alpine
+    container_name: questionnaires_compiler.web
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - ./nginx/configs/sites-enabled/:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/configs/cors.conf/:/etc/nginx/global/cors.conf
+    restart: always
+    depends_on:
+      - questionnaires_compiler
+    networks:
+      questionnaires-compiler-network:
+
+
+networks:
+  questionnaires-compiler-network:
+
+volumes:
+  postgres_data:
+  mongodb_data:

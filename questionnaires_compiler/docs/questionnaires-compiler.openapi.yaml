@@ -1,0 +1,80 @@
+openapi: 3.0.0
+
+info:
+  version: "1.0.0"
+  title: "RAG API"
+  description: "This document provides detailed information about the RAG API."
+servers:
+  - url: https://localhost/api/v1
+
+paths:
+  /answers:
+    post:
+      tags:
+        - Answers
+      description: "Allow to do similarity search for a question"
+      operationId: AnswersPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnswersInput"
+        required: true
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnswersOutput"
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    BasicAuth:
+      type: http
+      scheme: basic
+    AdminAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+
+  schemas:
+    Category:
+      type: string
+      enum:
+        - IT
+        - Dev
+        - Ops
+        - Security
+        - Compliance
+        - ESG
+        - HR
+        - Legal
+    AnswersInput:
+      type: object
+      properties:
+        question:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+        category:
+          $ref: '#/components/schemas/Category'
+      required:
+        - question
+        - products
+        - category
+    AnswersOutput:
+      type: object
+      properties:
+        response:
+          type: string
+      required:
+        - response

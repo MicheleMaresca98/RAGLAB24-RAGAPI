@@ -1,0 +1,43 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[**.py]
+quote_type = single
+multi_line_output = 4
+insert_final_newline = true
+py_version = 310
+skip_gitignore = true
+line_length = 79
+use_parentheses = true
+honor_noqa = true
+lines_after_imports = 2
+known_local_folder =
+  questionnaires_compiler
+  core
+  csc
+
+[**.md]
+max_line_length = off
+trim_trailing_whitespace = false
+
+[**.json]
+insert_final_newline = false
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.sh]
+indent_size = 2
+
+[**.min.js]
+indent_style = ignore
+insert_final_newline = ignore
