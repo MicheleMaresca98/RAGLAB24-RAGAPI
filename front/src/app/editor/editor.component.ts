@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
 import { RagService } from '../rag.service';
 import { AnsweredQuestion } from '../answered-question';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-editor',
@@ -12,11 +12,18 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './editor.component.scss',
 })
 export class EditorComponent implements OnInit {
+  @ViewChild('currentAnswer', { read: ElementRef })
+  currentAnswer!: ElementRef<HTMLTextAreaElement>;
+
   questions: AnsweredQuestion[] = [];
 
   questionIndex = 0;
 
-  constructor(private ragService: RagService) {}
+  readonly categories: { name: string; label: string }[];
+
+  constructor(private ragService: RagService) {
+    this.categories = this.ragService.categories;
+  }
 
   ngOnInit(): void {
     this.loadQuestions();
@@ -36,12 +43,19 @@ export class EditorComponent implements OnInit {
     for (const [index, question] of this.questions.entries()) {
       const answeredQuestion = await this.ragService.askQuestion(question);
       this.questions[index] = answeredQuestion;
+      if (index === 0) {
+        this.selectCurrentAnswerText();
+      }
       console.log('Question answered: ', answeredQuestion);
     }
   }
 
   get currentQuestion(): AnsweredQuestion | undefined {
     return this.questions[this.questionIndex];
+  }
+
+  categoryLabel(category: string) {
+    return this.categories.find((c) => c.name === category)?.label;
   }
 
   questionStateClass(question: AnsweredQuestion) {
@@ -69,6 +83,21 @@ export class EditorComponent implements OnInit {
     };
   }
 
+  questionStateText(question: AnsweredQuestion) {
+    switch (question.state) {
+      case 'Human':
+        return 'Needs review';
+      case 'Accepted':
+        return 'Accepted';
+      case 'Rejected':
+        return 'Rejected';
+      case 'Edited':
+        return 'Edited';
+      case 'Waiting':
+        return 'Waiting';
+    }
+  }
+
   selectQuestion(index: number) {
     this.questionIndex = index;
   }
@@ -78,6 +107,7 @@ export class EditorComponent implements OnInit {
     if (this.questionIndex >= this.questions.length) {
       this.questionIndex = 0;
     }
+    this.selectCurrentAnswerText();
   }
 
   previousQuestion() {
@@ -85,9 +115,33 @@ export class EditorComponent implements OnInit {
     if (this.questionIndex < 0) {
       this.questionIndex = this.questions.length - 1;
     }
+    this.selectCurrentAnswerText();
   }
 
-  updateCurrentQuestion() {
-    this.ragService.updateQuestion(this.currentQuestion!);
+  onShiftEnter(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.updateCurrentQuestion();
+  }
+
+  async updateCurrentQuestion() {
+    if (!this.currentQuestion) {
+      return;
+    }
+    const question = this.currentQuestion;
+    this.nextQuestion();
+    question.state = 'Waiting';
+    await this.ragService.updateQuestion({
+      ...question,
+      state: 'Accepted',
+    });
+    question.state = 'Accepted';
+  }
+
+  private selectCurrentAnswerText() {
+    setTimeout(() => {
+      this.currentAnswer.nativeElement.focus();
+      this.currentAnswer.nativeElement.select();
+    }, 0);
   }
 }
