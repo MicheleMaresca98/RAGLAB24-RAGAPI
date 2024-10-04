@@ -155,7 +155,8 @@ def apply_threshold_and_format_docs(
                 "question": question['question'],
                 "answer": doc.metadata['answer'],
                 "doc_id": doc.metadata['doc_id'],
-                "similarity": doc.metadata['score']
+                "similarity": doc.metadata['score'],
+                "answer_date": doc.metadata['answer_date']
             }
             relevant_docs.append(relevant_doc)
     return relevant_docs
