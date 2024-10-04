@@ -103,6 +103,7 @@
     <div class="editor-references-label">References</div>
     <div *ngFor="let reference of currentQuestion.references">
       <div class="editor-references-source">{{ reference.docId }}</div>
+      <div class="editor-references-date">{{ reference.answerDate | date }}</div>
       <div class="editor-references-question">{{ reference.question }}</div>
       <div class="editor-references-answer">{{ reference.answer }}</div>
     </div>

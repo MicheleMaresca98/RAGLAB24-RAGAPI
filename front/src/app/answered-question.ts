@@ -7,8 +7,9 @@ export interface AnsweredQuestion extends Question {
   references: {
     question: string;
     answer: string;
+    answerDate: Date;
     docId: string;
     similarity: number;
-  }[],
+  }[];
   state: QuestionState;
 }

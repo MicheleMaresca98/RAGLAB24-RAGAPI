@@ -152,6 +152,7 @@ export class RagService {
         used_data: {
           question: string;
           answer: string;
+          answer_date: string;
           doc_id: string;
           similarity: number;
         }[];
@@ -168,6 +169,7 @@ export class RagService {
       references: answer.used_data.map((data) => ({
         question: data.question,
         answer: data.answer,
+        answerDate: new Date(data.answer_date),
         docId: data.doc_id,
         similarity: data.similarity,
       })),
