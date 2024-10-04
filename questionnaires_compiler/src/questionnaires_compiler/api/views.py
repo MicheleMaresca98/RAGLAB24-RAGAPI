@@ -116,7 +116,7 @@ def answers(
         try:
             answer = literal_eval(llm_answers.content)
             question_embedding = embeddings.embed_query(question)
-            MONGODB_COLLECTION_DOCUMENTS.update_one(
+            MONGODB_COLLECTION.update_one(
                 {"doc_id": doc_id, "question": question},
                 {"$set": {"answer": answer["answer"],
                         "category": category,
@@ -175,7 +175,7 @@ def extract_questions(
         lines: List[List[str]] = request.data['lines']
 
 
-        MONGODB_COLLECTION.update_one(
+        MONGODB_COLLECTION_DOCUMENTS.update_one(
             {"doc_id": doc_id},
             {"$set": {"doc_id": doc_id, "status": "Open"}},
             upsert=True
