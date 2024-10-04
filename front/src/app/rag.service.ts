@@ -19,6 +19,7 @@ export class RagService {
 
   categories = [
     { name: 'GENERAL', label: 'General' },
+    { name: 'OTHER', label: 'Other' },
     { name: 'IT', label: 'IT' },
     { name: 'DEVOPS', label: 'Dev Ops' },
     { name: 'SECURITY', label: 'Security' },
@@ -26,6 +27,7 @@ export class RagService {
     { name: 'ESG', label: 'ESG' },
     { name: 'HR', label: 'HR' },
     { name: 'LEGAL', label: 'Legal' },
+    { name: 'FINANCE', label: 'Finance' },
   ];
 
   readonly EXTRACT_QUESTION_API =
@@ -71,6 +73,7 @@ export class RagService {
         const chunk = sheetDataJson.slice(i, i + chunkSize);
         const data = {
           sheet_name: sheetName,
+          doc_id: this.file?.name,
           lines: chunk as string[][],
         };
         console.log('Sending chunk to API: ', data);
@@ -101,6 +104,7 @@ export class RagService {
     firstRow: number,
     data: {
       sheet_name: string;
+      doc_id: string;
       lines: string[][];
     }
   ): Promise<Question[]> {
@@ -152,6 +156,7 @@ export class RagService {
           similarity: number;
         }[];
       }>(this.ASK_QUESTION_API, {
+        doc_id: this.file?.name,
         question: question.text,
         category: question.category,
         products: [],
