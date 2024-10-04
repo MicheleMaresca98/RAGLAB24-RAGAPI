@@ -35,12 +35,16 @@ def answers(
     try:
         question: str = in_serializer.data['question']
         doc_id: str = in_serializer.data['doc_id']
-        category: str = in_serializer.data['category']
+        category: str = in_serializer.data.get('category', None)
         products: Optional[List[str]] = in_serializer.data.get('products', None)
 
         _and = [
-            {"category": {"$eq": category}},
+            {"status": {"$in": ["HUMAN", "ACCEPTED"]}}
         ]
+
+        if category:
+            _and.append({"category": {"$eq": category}})
+
         if products:
             _and.append({"products": {"$eq": products}})
 
